@@ -1,16 +1,16 @@
 #!/bin/bash
 
-set -e
-set -u
+set -e  #告诉bash如果任何语句的执行结果不是true则退出；set -o errexit
+set -u  #可以让脚本遇到错误时停止执行，并指出错误的行数信息；set -o nounset
 
-if [ -e ./firmadyne.config ]; then
-    source ./firmadyne.config
-elif [ -e ../firmadyne.config ]; then
-    source ../firmadyne.config
-else
-    echo "Error: Could not find 'firmadyne.config'!"
-    exit 1
-fi
+if [ -e ./firmadyne.config ]; then  #如果存在firmadyne文件（配置文件——config文件），就为真，那么执行
+    source ./firmadyne.config  #使Shell读入指定的Shell程序文件并依次执行文件中的所有语句；source命令通常用于重新执行刚修改的初始化文件，使之立即生效，而不必注销并重新登录
+elif [ -e ../firmadyne.config ]; then  #如果当前界面的父级目录（即当前目录点击返回之后的目录）中有firmadyne文件，则执行
+    source ../firmadyne.config  #则执行这个文件
+else  #如果都不是
+    echo "Error: Could not find 'firmadyne.config'!"  #输出提示信息
+    exit 1  #非正常运行导致退出程序
+fi  #类似于Python里的end，判断语句好像必须以fi为结尾
 
 function getArch() {
     if (echo ${FILETYPE} | grep -q "MIPS64")
