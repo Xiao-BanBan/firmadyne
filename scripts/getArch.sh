@@ -12,8 +12,8 @@ else  #如果都不是
     exit 1  #非正常运行导致退出程序
 fi  #类似于Python里的end，判断语句好像必须以fi为结尾
 
-function getArch() {
-    if (echo ${FILETYPE} | grep -q "MIPS64")
+function getArch() {  #getArch函数
+    if (echo ${FILETYPE} | grep -q "MIPS64")  #安静模式，不打印任何标准输出。如果有匹配的内容则立即返回状态值0；“|”将两个命令隔开，管道符左边命令的输出就会作为管道符右边命令的输入
     then
         ARCH="mips64"
     elif (echo ${FILETYPE} | grep -q "MIPS")
@@ -40,10 +40,10 @@ function getArch() {
 }
 
 function getEndian() {
-    if (echo ${FILETYPE} | grep -q "LSB")
+    if (echo ${FILETYPE} | grep -q "LSB")  #LSB最小有效字节
     then
         END="el"
-    elif (echo ${FILETYPE} | grep -q "MSB")
+    elif (echo ${FILETYPE} | grep -q "MSB")  #MSB最高有效字节
     then
         END="eb"
     else
@@ -51,17 +51,17 @@ function getEndian() {
     fi
 }
 
-INFILE=${1}
-BASE=$(basename "$1")
-IID=${BASE%.tar.gz}
+INFILE=${1}  #把第一个位置参数赋值给变量INFIlE
+BASE=$(basename "$1")  #basename命令用于获取路径中的文件名或路径名,还可以对末尾字符进行删除；去除第一个位置参数的目录，把剩下的名字作为变量的值赋值给变量BASE；即获得第一个位置参数的文件名
+IID=${BASE%.tar.gz}  #把tar.gz最后一个.及其右边的删除，即获取他的文件名的前缀
 
-mkdir -p "/tmp/${IID}"
+mkdir -p "/tmp/${IID}"  #建立/temp目录的子目录，（-p）确保/temp目录存在，不存在就建一个；然后把IID文件放在这个目录下，即构建了建立/temp目录的子目录
 
-set +e
-FILES="$(tar -tf $INFILE | grep -e "/busybox\$") "
+set +e  #执行的时候如果出现了返回值为非零将会继续执行下面的脚本
+FILES="$(tar -tf $INFILE | grep -e "/busybox\$") "  #INFILE是一个变量，是一个目录，列出这个目录下的所有文件；
 FILES+="$(tar -tf $INFILE | grep -E "/sbin/[[:alpha:]]+")"
 FILES+="$(tar -tf $INFILE | grep -E "/bin/[[:alpha:]]+")"
-set -e
+set -e  #执行的时候如果出现了返回值为非零，整个脚本 就会立即退出
 
 for TARGET in ${FILES}
 do
