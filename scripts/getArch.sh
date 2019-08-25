@@ -58,14 +58,14 @@ IID=${BASE%.tar.gz}  #把tar.gz最后一个.及其右边的删除，即获取他
 mkdir -p "/tmp/${IID}"  #建立/temp目录的子目录，（-p）确保/temp目录存在，不存在就建一个；然后把IID文件放在这个目录下，即构建了建立/temp目录的子目录
 
 set +e  #执行的时候如果出现了返回值为非零将会继续执行下面的脚本
-FILES="$(tar -tf $INFILE | grep -e "/busybox\$") "  #INFILE是一个变量，是一个目录，列出这个目录下的所有文件；
-FILES+="$(tar -tf $INFILE | grep -E "/sbin/[[:alpha:]]+")"
+FILES="$(tar -tf $INFILE | grep -e "/busybox\$") "  #INFILE是一个变量，是一个目录，列出这个目录下的所有文件；并找到/busy/box这个目录下的文件
+FILES+="$(tar -tf $INFILE | grep -E "/sbin/[[:alpha:]]+")"  #
 FILES+="$(tar -tf $INFILE | grep -E "/bin/[[:alpha:]]+")"
 set -e  #执行的时候如果出现了返回值为非零，整个脚本 就会立即退出
 
 for TARGET in ${FILES}
 do
-    SKIP=$(echo "${TARGET}" | fgrep -o / | wc -l)
+    SKIP=$(echo "${TARGET}" | fgrep -o / | wc -l)  #将样式视为固定字符串的列表，只显示匹配部分
     tar -xf "${INFILE}" -C "/tmp/${IID}/" --strip-components=${SKIP} ${TARGET}
     TARGETLOC="/tmp/$IID/${TARGET##*/}"
 
