@@ -59,19 +59,19 @@ mkdir -p "/tmp/${IID}"  #建立/temp目录的子目录，（-p）确保/temp目�
 
 set +e  #执行的时候如果出现了返回值为非零将会继续执行下面的脚本
 FILES="$(tar -tf $INFILE | grep -e "/busybox\$") "  #INFILE是一个变量，是一个目录，列出这个目录下的所有文件；并找到/busy/box这个目录下的文件
-FILES+="$(tar -tf $INFILE | grep -E "/sbin/[[:alpha:]]+")"  #
+FILES+="$(tar -tf $INFILE | grep -E "/sbin/[[:alpha:]]+")"  #/busybox/sbin/任意字母/bin/任意字母
 FILES+="$(tar -tf $INFILE | grep -E "/bin/[[:alpha:]]+")"
 set -e  #执行的时候如果出现了返回值为非零，整个脚本 就会立即退出
 
 for TARGET in ${FILES}
 do
-    SKIP=$(echo "${TARGET}" | fgrep -o / | wc -l)  #将样式视为固定字符串的列表，只显示匹配部分
-    tar -xf "${INFILE}" -C "/tmp/${IID}/" --strip-components=${SKIP} ${TARGET}
+    SKIP=$(echo "${TARGET}" | fgrep targre-o / | wc -l)  #将样式视为固定字符串的列表，只显示匹配部分，即显示每一个包含上面的这个目录的变量中/的数量
+    tar -xf "${INFILE}" -C "/tmp/${IID}/" --strip-components=${SKIP} ${TARGET}  #把1.tar.gz中的文件解出到/temp这个目录下，并且在解压过程中去除掉SKIP个引导部分
     TARGETLOC="/tmp/$IID/${TARGET##*/}"
 
-    if [ -h ${TARGETLOC} ] || [ ! -f ${TARGETLOC} ]
-    then
-        continue
+    if [ -h ${TARGETLOC} ] || [ ! -f ${TARGETLOC} ]  #-h当TARGRTLOC存在并且是符号链接文件时返回真或-f当TARGRTLOC存在并且是正规文件时返回真
+    then                                             #即当TARGRTLOC存在并且是符号链接文件或TARGRTLOC存在并且是正规文件（不是正规文件）
+        continue                                     #一直找到TARGRTLOC是符号链接文件或不是正规文件时，就跳出循环
     fi
 
     FILETYPE=$(file ${TARGETLOC})
