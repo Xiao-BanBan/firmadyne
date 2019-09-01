@@ -74,23 +74,24 @@ do
         continue                                     #一直找到TARGRTLOC是符号链接文件或不是正规文件时，就跳出循环
     fi
 
-    FILETYPE=$(file ${TARGETLOC})
+    FILETYPE=$(file ${TARGETLOC})  #file命令识别文件类型
 
-    echo -n "${TARGET}: "
-    getArch
-    getEndian
+    echo -n "${TARGET}: "   #不换行输出
+    getArch  #运行上面的这个函数
+    getEndian  #运行上面的这个函数
 
-    if [ -n "${ARCH}" ] && [ -n "${END}" ]
+    if [ -n "${ARCH}" ] && [ -n "${END}" ]  #shell 中利用 -n 来判定字符串非空
     then
-        ARCHEND=${ARCH}${END}
-        echo ${ARCHEND}
+        ARCHEND=${ARCH}${END}  #最终架构 
+        echo ${ARCHEND}  #输出架构
 
         psql -d firmware -U firmadyne -h 127.0.0.1 -q -c "UPDATE image SET arch = '$ARCHEND' WHERE id = $IID;"
-
-        rm -fr "/tmp/${IID}"
-        exit 0
+        # -d 指定要连接的数据库  -U指定用户名（即找到某个用户的数据库）  -h指定服务器主机  -q以安静模式运行，不显示消息，只查询结果
+        #-c执行单一命令（SQL或指令内部指令）然后结束  UPDATE更新表称（表名称叫image），SET列名称，id的列名称那个更新数据
+        rm -fr "/tmp/${IID}"  #强制删除文件 -f是强制，不提示。-r是递归珊瑚
+        exit 0  #正常运行程序并退出程序
     else
-        echo -n ${ARCH}
+        echo -n ${ARCH} 
         echo ${END}
     fi
 done
