@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python  #前面已经识别路路由器的构架了，并将结果存入数据库中了，现在要装载路由器固件系统内容存储对象到imagetables
 
-import tarfile
+import tarfile  #引用Python中的各个库
 import getopt
 import sys
 import re
@@ -8,9 +8,9 @@ import hashlib
 import psycopg2
 import six
 
-def getFileHashes(infile):
-    t = tarfile.open(infile)
-    files = list()
+def getFileHashes(infile): #实际上把实际参数./images/1.tar.gz赋值给infile形式参数
+    t = tarfile.open(infile)  #打开文件
+    files = list()  #初始化列表 
     links = list()
     for f in t.getmembers():
         if f.isfile():
