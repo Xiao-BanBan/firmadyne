@@ -10,9 +10,9 @@ import six
 
 def getFileHashes(infile): #实际上把实际参数./images/1.tar.gz赋值给infile形式参数
     t = tarfile.open(infile)  #打开文件
-    files = list()  #初始化列表 
+    files = list()  #初始化列表
     links = list()
-    for f in t.getmembers():
+    for f in t.getmembers():  #
         if f.isfile():
             # we use f.name[1:] to get rid of the . at the beginning of the path
             files.append((f.name[1:], hashlib.md5(t.extractfile(f).read()).hexdigest(),
