@@ -12,14 +12,15 @@ def getFileHashes(infile): #实际上把实际参数./images/1.tar.gz赋值给in
     t = tarfile.open(infile)  #打开文件
     files = list()  #初始化列表
     links = list()
-    for f in t.getmembers():  #
-        if f.isfile():
+    for f in t.getmembers():  #获取文件夹中的所有文件的文件名
+        if f.isfile():  #如果只写文件的是文件
             # we use f.name[1:] to get rid of the . at the beginning of the path
-            files.append((f.name[1:], hashlib.md5(t.extractfile(f).read()).hexdigest(),
-                          f.uid, f.gid, f.mode))
-        elif f.issym():
+            files.append((f.name[1:], hashlib.md5(t.extractfile(f).read()).hexdigest(),  #扩充files列表和links列表
+                          #hashlib.md5()函数: 获取一个md5加密算法对象(解压文件，读出来），转换成16进制字符串
+                          f.uid, f.gid, f.mode))  #获取文件的用户身份，用户组身份和权限设定子串
+        elif f.issym():  #如果不是文件，
             links.append((f.name[1:], f.linkpath))
-    return (files, links)
+    return (files, links)  #返回元祖
 
 def getOids(objs, cur):
     # hashes ... all the hashes in the tar file
