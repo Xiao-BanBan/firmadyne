@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/bin/bash  创建路由器固件的QEMU磁盘镜像
 
 set -e
 set -u
 
-if [ -e ./firmadyne.config ]; then
-    source ./firmadyne.config
-elif [ -e ../firmadyne.config ]; then
+if [ -e ./firmadyne.config ]; then  #如果./firmadyne.config这个配置文件存在，则为真
+    source ./firmadyne.config  #重新执行刚修改的初始化文件，使之立即生效，而不必注销并重新登录
+elif [ -e ../firmadyne.config ]; then  #如果./firmadyneg的上一级目录中这个配置文件存在，则为真
     source ../firmadyne.config
 else
     echo "Error: Could not find 'firmadyne.config'!"
@@ -23,16 +23,19 @@ if check_root; then
     exit 1
 fi
 
-if [ $# -gt 1 ]; then
-    if check_arch "${2}"; then
+if [ $# -gt 1 ]; then  #传给脚本的参数个数看看是否大于1
+    if check_arch "${2}"; then  #第二个位置参数checf_arch一下
         echo "Error: Invalid architecture!"
         exit 1
     fi
 
     ARCH=${2}
-else
-    echo -n "Querying database for architecture... "
+else  #如果未知参数不大于1
+    echo -n "Querying database for architecture... "  #不换行输出
     ARCH=$(psql -d firmware -U firmadyne -h 127.0.0.1 -t -q -c "SELECT arch from image WHERE id=${1};")
+    #-d （datebase）指定要连接的数据库，数据库为firmware -U指定数据库用户名为firmadyne 
+    #-h（host）指定要连接的主机名，数据库服务器主机或socket目录(默认："本地接口") -q 以沉默模式运行(不显示消息，只有查询结果)
+    #-t --tuples-only只打印记录i -c执行单一命令(SQL或内部指令)然后结束
     ARCH="${ARCH#"${ARCH%%[![:space:]]*}"}"
     echo "${ARCH}"
     if [ -z "${ARCH}" ]; then
