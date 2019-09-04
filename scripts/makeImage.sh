@@ -35,8 +35,8 @@ else  #如果未知参数不大于1
     ARCH=$(psql -d firmware -U firmadyne -h 127.0.0.1 -t -q -c "SELECT arch from image WHERE id=${1};")
     #-d （datebase）指定要连接的数据库，数据库为firmware -U指定数据库用户名为firmadyne 
     #-h（host）指定要连接的主机名，数据库服务器主机或socket目录(默认："本地接口") -q 以沉默模式运行(不显示消息，只有查询结果)
-    #-t --tuples-only只打印记录i -c执行单一命令(SQL或内部指令)然后结束
-    ARCH="${ARCH#"${ARCH%%[![:space:]]*}"}"
+    #-t --tuples-only只打印记录i  -c执行单一命令(SQL或内部指令)然后结束  找到image（猜测可能是个列表）中id是第一个位置参数，把他的arch挑出来
+    ARCH="${ARCH#"${ARCH%%[![:space:]]*}"}"  #[![:space:]]匹配空白字符（空格和水平制表符）
     echo "${ARCH}"
     if [ -z "${ARCH}" ]; then
         echo "Error: Unable to lookup architecture. Please specify {armel,mipseb,mipsel} as the second argument!"
